@@ -5,10 +5,11 @@ Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/trusty64"
   config.vm.hostname = "pdnstest"
 
-  forward_port = ->(guest, host = guest) do
+  forward_port = ->(guest, host = guest, protocol = 'tcp') do
     config.vm.network :forwarded_port,
       guest: guest,
       host: host,
+      protocol: protocol,
       auto_correct: true
   end
   
@@ -17,8 +18,8 @@ Vagrant.configure("2") do |config|
 
   forward_port[3306]     
   forward_port[80, 48080] 
-  config.vm.network "forwarded_port", guest: 53, host: 53, protocol: "tcp"
-  config.vm.network "forwarded_port", guest: 53, host: 53, protocol: "udp"
+  forward_port[53, 53, 'udp']
+  forward_port[53, 53, 'tcp']
 
   config.vm.network :private_network, ip: "33.33.33.10"
 
